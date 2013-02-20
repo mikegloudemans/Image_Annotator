@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>Image Annotator Demo</title>	
+	<!-- jQuery Javascript -->
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<!-- jQuery UI Javascript -->
+	<script type="text/javascript">
+	   google.load("jquery", "1");
+	   google.load("jqueryui", "1");	   
+	</script>
+	<!-- YAML Parser Javascript -->
+	<script src="js-yaml.min.js"></script>
+	<!-- Local Javascript -->
+	<script type="text/javascript" src="demo_code.js"></script>
+	<!-- jQuery UI CSS -->
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css">
+	<!-- Local CSS -->
+	<link rel="stylesheet" href="demo_styles.css">
+</head>
+<body>
+<div id="wrapper">
+	<div id="Header">
+		<h1>Image Annotator Demo</h1>
+	</div>
+	<div id="tabs">
+		<ul>
+			<li><a href="#Inputs">Inputs</a></li>
+			<li><a href="#Phase_One">Marking Phase</a></li>
+			<li><a href="#Phase_Two">Annotation Phase</a></li>
+			<li><a href="#Output">Output</a></li>
+		</ul>	
+		<div id="Inputs">
+			<p>Enter YAML Configuration File from Local Filesystem or Remote Location:</p>	
+			<br><br>
+			<p>Local Filesystem: <input type="file" id="I_local"></p>
+			<br>
+			<p>Remote Location: 
+				<input type="text" id="I_remote" disabled="true">
+				<input type="button" id="I_remote_btn" value="Load" onclick="I_remote_handler()" disabled="true">
+			</p>
+		</div>
+		<div id="Phase_One">
+			<div id="P1_mark">
+				<canvas id="P1_canv_img" width="760" height="560"></canvas>
+				<canvas id="P1_canv_mark" width="760" height="560"></canvas>				
+			</div>
+			<p id="P1_cell_count">Cell Count: 0</p>			
+			<div id="invisible_canvas">
+				<canvas id="p1_c1" width="760" height="560"></canvas>				
+				<canvas id="p1_c2" width="760" height="560"></canvas>				
+				<canvas id="p1_c3" width="760" height="560"></canvas>	
+			</div>	
+		</div>
+		<div id="Phase_Two">
+			<div id="P2_main">
+				<canvas id="P2_m_plus" width="525" height="400"></canvas>
+				<canvas id="P2_m" width="525" height="400"></canvas>
+				<canvas id="P2_m_mark" width="525" height="400"></canvas>
+			</div>
+			<div id="P2_ref_wrapper">
+				<div id="P2_ref_1">					
+					<canvas id="P2_r1_plus" width="525" height="190"></canvas>
+					<canvas id="P2_r1" width="525" height="190"></canvas>
+				</div>				
+				<div id="P2_ref_2">				
+					<canvas id="P2_r2_plus" width="525" height="190"></canvas>
+					<canvas id="P2_r2" width="525" height="190"></canvas>
+				</div>				
+				<div id="P2_ref_3">
+					<canvas id="P2_r3_plus" width="525" height="190"></canvas>
+					<canvas id="P2_r3" width="525" height="190"></canvas>
+				</div>				
+			</div>
+			<div id="invisible_text">
+				<p>Filler Text for Now</p>
+			</div>
+			<br><br>
+			<div id="P2_foot_wrapper">
+				<p>Cell ID: 
+					<input type="button" id="P2_cell_prev" value="<" onclick="P2_back_clk()"></input>
+					<input type="text" id="P2_cell_id" disabled="true" value="0"></input>/<input type="text" id="P2_cell_tot" disabled="true" value="0"></input>
+					<input type="button" id="P2_cell_next" value=">" onclick="P2_fore_clk()"></input>
+					<input type="button" id="P2_cell_save" value=" Save Cell Info " onclick="P2_save_cat()"></input>
+					<input type="button" id="P2_done" value=" DONE " onclick="send_output()"></input>
+				</p>
+				<p>Z-Index:
+					Top:<input type="text" id="P2_z1" disabled="true" value="0"></input>/<input type="text" id="P2_z1_max" disabled="true" value="0"></input>
+					Middle:<input type="text" id="P2_z2" disabled="true" value="0"></input>/<input type="text" id="P2_z2_max" disabled="true" value="0"></input>
+					Bottom:<input type="text" id="P2_z3" disabled="true" value="0"></input>/<input type="text" id="P2_z3_max" disabled="true" value="0"></input>
+					<input type="button" value="<" onclick="P2_decrease_z()"></input>
+					<input type="button" value=">" onclick="P2_increase_z()"></input>
+				</p>
+				<div id="P2_cat">
+					<br>
+				</div>
+			</div>
+		</div>
+		<div id="Output">
+			<p id="output_header">
+			</p>
+			<p id="output_txt">
+			</p>
+		</div>
+	</div>
+</div>
+</body>

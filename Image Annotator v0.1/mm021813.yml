@@ -1,0 +1,31 @@
+{
+  "images": {
+    "ref1": [
+      "168_blue_1.jpg"
+    ], 
+    "ref3": [
+      "168_green_1.jpg","168_dic_1.jpg"
+    ], 
+    "main": [
+      "168_dic_1.jpg"
+    ], 
+    "ref2": [
+      "168_red_1.jpg"
+    ]
+  }, 
+  "categories": {
+    "Bud": [
+      Unbudded, 
+      Budded
+    ], 
+    "Myosin Ring": [
+      "Present", 
+      "Not Present"
+    ], 
+    "SPB": [
+      "Unduplicated",
+      "Duplicated-Short Spindle",
+      "Duplicated-Long Spindle"
+    ]
+  }
+}
