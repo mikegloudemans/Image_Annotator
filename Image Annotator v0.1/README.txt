@@ -1,6 +1,5 @@
 Author: Nikhil Saxena
 Date: February 12, 2013
-Email: nsax91@gmail.com
 
 =====================
 Image Annotator v0.1
