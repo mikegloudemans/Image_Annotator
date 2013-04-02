@@ -123,8 +123,6 @@ var categories;
 // Marking Phase - Phase One
 js_clear_flag = false; 
 
-
-
 // Annotation Phase - Phase Two
 var P2_ref1_img_local = new Array();
 var P2_ref2_img_local = new Array();
@@ -190,14 +188,34 @@ function colorImage(img_px,red,green,blue) {
 	return img_px;
 }
 
-
 // ========================================
 // Input
 
 function I_reader(e) {
+	// Disable Inputs
+	document.getElementById('I_local').disabled = true;
+	document.getElementById('I_remote').disabled = true;
+	document.getElementById('I_remote_btn').disabled = true;
+	
+	// Read Local YAML File
 	readFile(this.files[0], function(e){
 		INPUT_FILE = e.target.result;
 		parseYAML();	
+	});
+}
+
+function I_remote_handler() {
+	// Disable Inputs
+	document.getElementById('I_local').disabled = true;
+	document.getElementById('I_remote').disabled = true;
+	document.getElementById('I_remote_btn').disabled = true;
+
+	// Read Remote YAML File
+	var file = document.getElementById('I_remote').value;
+	
+	readFile(file, function(e){
+		INPUT_FILE = e.target.result;
+		parseYAML();
 	});
 }
 
@@ -209,13 +227,13 @@ function readFile(file,callback) {
 
 function parseYAML() {
 	// Parse YAML
-	var YAMLfile = jsyaml.load(INPUT_FILE);
+	var YAMLfile = jsyaml.load(INPUT_FILE);	
 	
 	// Load Image Paths
 	main_line = YAMLfile.images.main.path;
 	ref1_line = YAMLfile.images.ref1.path;
 	ref2_line = YAMLfile.images.ref2.path;
-	ref3_line = YAMLfile.images.ref3.path;	
+	ref3_line = YAMLfile.images.ref3.path;		
 	
 	// Load Image Titles
 	main_title = YAMLfile.images.main.title;
@@ -300,16 +318,15 @@ function P1_updateCount() {
 function initialize_P2() {
 	// Display Crosshair on All P2 Images
 	P2_display_plus();
-
+	
 	// Set up Categories
 	P2_setup_categories();
-
+	
 	// Set up Reference Image Titles
 	P2_display_ref_titles();
 	
 	// Set up Reference Images
-	P2_setup_ref1();
-	
+	P2_setup_ref1();	
 	P2_setup_ref2();
 	P2_setup_ref3();
 	
@@ -431,7 +448,7 @@ function P2_setup_z_counts() {
 	// Initialize Z-Index Counts
 	document.getElementById('P2_z1_max').value = P2_ref1_img_local.length;
 	document.getElementById('P2_z2_max').value = P2_ref2_img_local.length;
-	document.getElementById('P2_z3_max').value = P2_ref3_img_local.length;
+	document.getElementById('P2_z3_max').value = P2_ref3_img_local.length;	
 	
 	// Show Images
 	P2_update_z_images();
@@ -466,7 +483,7 @@ function P2_update_z_images() {
 	// Draw Ref1 onto Reference Canvas
 	ref1_canv = document.getElementById('P2_r1').getContext('2d');
 	ref1_canv.drawImage(P2_ref1_img_local[P2_ref1_z],0,0);	
-
+	
 	// Draw Ref2 onto Reference Canvas
 	ref2_canv = document.getElementById('P2_r2').getContext('2d');
 	ref2_canv.drawImage(P2_ref2_img_local[P2_ref2_z],0,0);	
@@ -485,13 +502,15 @@ function P2_decrease_z() {
 	if (P2_ref1_z > 0) {P2_ref1_z--;}
 	if (P2_ref2_z > 0) {P2_ref2_z--;}
 	if (P2_ref3_z > 0) {P2_ref3_z--;}
+
 	P2_update_z_images();
 }
 
 function P2_increase_z() {
-	if (P2_ref1_z < ref1_img_local.length-1) {P2_ref1_z++;}
-	if (P2_ref2_z < ref2_img_local.length-1) {P2_ref2_z++;}
-	if (P2_ref3_z < ref3_img_local.length-1) {P2_ref3_z++;}
+	if (P2_ref1_z < P2_ref1_img_local.length-1) {P2_ref1_z++;}
+	if (P2_ref2_z < P2_ref2_img_local.length-1) {P2_ref2_z++;}
+	if (P2_ref3_z < P2_ref3_img_local.length-1) {P2_ref3_z++;}
+	
 	P2_update_z_images();
 }
 
@@ -938,9 +957,91 @@ function send_output() {
 		out_txt.innerHTML += txt;
 	}	
 	out_txt.innerHTML += "<br>";
+	
+	// Calculate and Show Summary
+	out_summary();
 }
 
+function out_summary() {
+	// Intermediate String
+	var out_txt = "Annotation Summary: <br>";
+	
+	// Initialize
+	var num_daughter = 0; 
+	var num_annot = new Array(); 	
+	var cells_annotated = 0; 
+	
+	// Set Up Category Template
+	var cat_template = new Array();
+	var cat_counter = 0; 
+	for (var i in categories) {
+		var cat_name = i;
+		var cats = categories[cat_name];
+		
+		// If Blank Text Box
+		if (!cats) {continue;}
+		
+		// Else, Add to Template
+		for (j = 0; j<cats.length; j++) {
+			cat_template[cat_counter] = cats[j];
+			cat_counter++;
+		}	
+	}	
+	
+	// Set Up Annotation Conter
+	var annot_counter = new Array();
+	for (var i = 0; i<cat_template.length; i++) {
+		annot_counter[i] = 0; 
+	}
+	
+	// Get Values from Annotations
+	for (var i = 0; i < CELL_DATA.length; i++) {	
+		// Get Index and Corresponding Cell
+		var curr_index = i; 		
+		var curr_cell = CELL_DATA.getItem(curr_index); 
+		
+		// If Current Cell Not Annotated Yet, Go to Next Iteration
+		if (!curr_cell.annot) {continue;}
+		cells_annotated++;
+		
+		// Check if Cell Has Daughter
+		if (curr_cell.dx != -1) {num_daughter++;}					
+		
+		// Check All Annotations		
+		for (var j = 0; j<curr_cell.annot.length; j++) {		
+			// Get Current Annotation Value
+			var curr_ann = curr_cell.annot[j];			
+		
+			// Check Category Template and Update Annotation Counter
+			for (var k = 0; k<cat_template.length; k++) {
+				// If Annotation Found, Update the Counter				
+				if (curr_ann == cat_template[k]) {
+					annot_counter[k]++;					
+					continue;
+				}			
+			}		
+		}		
+	}	
+	
+	// Calculate Percentages
+	num_daughter = Math.floor(num_daughter*100/cells_annotated);
+	out_txt += "With Daughter Cells: " + num_daughter + "% <br>";
+	num_daughter = 100-num_daughter;
+	out_txt += "Without Daughter Cells: " + num_daughter + "% <br>";
 
+	for (var i = 0; i < cat_template.length; i++) {
+		// Get Category
+		out_txt += cat_template[i];
+		out_txt += ": ";
+		
+		// Actual Calculation
+		out_txt += Math.floor(annot_counter[i]*100/cells_annotated);
+		out_txt += "% <br>";
+	}
+	
+	// Send to Front-End
+	document.getElementById('output_summary').innerHTML = out_txt;	
+}
 
 
 
