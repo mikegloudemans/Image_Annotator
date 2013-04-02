@@ -1,4 +1,7 @@
-* {
+/* ---------------------------- */
+/* Overall */
+
+*{
 	margin: 0px;
 	padding: 0px;
 }
@@ -6,22 +9,13 @@
 #wrapper {
 	width: 1200px;
 	margin: 15px auto;
-	text-align: left;
+	text-align: left; 
 }
 
-#header {
-	font: 15px arial,sans-serif;
-	background: #BDBDBD;
-	color: black;
-}
+/* ---------------------------- */
+/* Marking Phase - Phase One    */
 
-#invisible_canvas {
-	position: absolute;
-	width: 750px; 
-	height: 560px; 
-}
-
-#P1_mark {
+#P1_mark {	
 	margin-bottom: 15px;
 	position: relative;
 	height: 560px;
@@ -30,38 +24,72 @@
 
 #P1_canv_img {
 	position: absolute;
-	z-index: 1;	
+	z-index: 4;	
 }
 
-#P1_canv_mark {
+#img_pde {
 	position: absolute;
-	z-index: 2;
+	z-index: 5;
 }
 
 #p1_c1 {
-	z-index: 3;
+	position: absolute;
+	z-index: 1;
 	visibility: hidden;
 }
 
 #p1_c2 {
+	position: absolute;
 	z-index: 2;
 	visibility: hidden;
 }
 
 #p1_c3 {
-	z-index: 1;
+	position: absolute;
+	z-index: 3;
 	visibility: hidden;
 }
 
-#P2_main {		
-	position: relative;
+
+/* ---------------------------- */
+/* Annotation Phase - Phase Two */
+
+#P2_m_title {
+	position: relative; 
+	top: 100px;
+	left: 20px; 
+}
+
+#P2_main_wrapper {
+	position: relative; 
 	float: left; 
 	top: 100px; 
-	left: 20px; 
+	left: 20px; 	
 	margin-right: 25px;
 	height: 400px;
-	width: 525px;
-	border-style: solid;		
+	width: 525px;	
+}
+
+#P2_m {
+	border-style: solid; 
+	position: absolute;
+	left: 0px; 
+	top: 0px; 
+	z-index: 2;
+}
+
+#P2_m_mark {
+	position: absolute;
+	left: 0px;
+	top: 0;
+	z-index: 2;		
+}
+
+#P2_m_plus {
+	position: absolute;
+	left: 0px;
+	top: 0;
+	z-index: 3;	
 }
 
 #P2_ref_wrapper {	
@@ -88,25 +116,18 @@
 	border-style: dotted; 
 }
 
-#P2_r1, #P2_r2, #P2_r3, #P2_m{
+#P2_r1, #P2_r2, #P2_r3 {
 	position: absolute;
 	left: 0px;
-	top: 0px;
+	top: 0;
 	z-index: 1; 
 }
 
-#P2_r1_plus, #P2_r2_plus, #P2_r3_plus, #P2_m_mark {
+#P2_r1_plus, #P2_r2_plus, #P2_r3_plus {
 	position: absolute;
 	left: 0px;
-	top: 0px;
+	top: 0;
 	z-index: 2;	
-}
-
-#P2_m_plus {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-	z-index: 3;	
 }
 
 #invisible_text {

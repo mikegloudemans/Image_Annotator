@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 	<meta charset="utf-8"/>
-	<title>Image Annotator Demo</title>	
+	<title>Image Annotator</title>
 	<!-- jQuery Javascript -->
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<!-- jQuery UI Javascript -->
@@ -12,26 +12,32 @@
 	</script>
 	<!-- YAML Parser Javascript -->
 	<script src="js-yaml.min.js"></script>
+	<!-- Processing.js -->
+	<script src="processing.min.js"></script>
 	<!-- Local Javascript -->
-	<script type="text/javascript" src="demo_code.js"></script>
+	<script src="img_annot_code.js"></script>
 	<!-- jQuery UI CSS -->
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery.ui.all.css">
 	<!-- Local CSS -->
-	<link rel="stylesheet" href="demo_styles.css">
+	<link rel="stylesheet" href="img_annot_styles.css">
 </head>
 <body>
 <div id="wrapper">
 	<div id="Header">
-		<h1>Image Annotator Demo</h1>
+		<h1>Image Annotator</h1>		
 	</div>
 	<div id="tabs">
 		<ul>
-			<li><a href="#Inputs">Inputs</a></li>
-			<li><a href="#Phase_One">Marking Phase</a></li>
-			<li><a href="#Phase_Two">Annotation Phase</a></li>
+			<li><a href="#Overview">Overview</a></li>
+			<li><a href="#Input">Input</a></li>
+			<li><a href="#Marking_Phase">Marking Phase</a></li>
+			<li><a href="#Annotation_Phase">Annotation Phase</a></li>
 			<li><a href="#Output">Output</a></li>
-		</ul>	
-		<div id="Inputs">
+		</ul>
+		<div id="Overview">
+			<p>This is where the overview will go.</p>
+		</div>
+		<div id="Input">
 			<p>Enter YAML Configuration File from Local Filesystem or Remote Location:</p>	
 			<br><br>
 			<p>Local Filesystem: <input type="file" id="I_local"></p>
@@ -41,48 +47,58 @@
 				<input type="button" id="I_remote_btn" value="Load" onclick="I_remote_handler()" disabled="true">
 			</p>
 		</div>
-		<div id="Phase_One">
+		<div id="Marking_Phase">
 			<div id="P1_mark">
-				<canvas id="P1_canv_img" width="760" height="560"></canvas>
-				<canvas id="P1_canv_mark" width="760" height="560"></canvas>				
-			</div>
-			<p id="P1_cell_count">Cell Count: 0</p>			
-			<div id="invisible_canvas">
+				<!-- Invisible Canvas Elements -->
 				<canvas id="p1_c1" width="760" height="560"></canvas>				
 				<canvas id="p1_c2" width="760" height="560"></canvas>				
 				<canvas id="p1_c3" width="760" height="560"></canvas>	
-			</div>	
+				<!--  -->
+				<canvas id="img_pde" data-processing-sources="img_annot_pde.pde"></canvas>
+				<canvas id="P1_canv_img" width="760" height="560"></canvas>
+			</div>
+			<p id="P1_btns">
+				<input type="button" id="P1_btn_clear" value="CLEAR" onclick="P1_clearAll()"></input>			
+			</p>
+			<br>
+			<p id="P1_mother">Mother Cell Count: 0</p>			
+			<p id="P1_daughter">Daughter Cell Count: 0</p>						
 		</div>
-		<div id="Phase_Two">
-			<div id="P2_main">
-				<canvas id="P2_m_plus" width="525" height="400"></canvas>
-				<canvas id="P2_m" width="525" height="400"></canvas>
-				<canvas id="P2_m_mark" width="525" height="400"></canvas>
+		<div id="Annotation_Phase">
+			<div id="P2_main">				
+				<p id="P2_m_title"></p>
+				<div id="P2_main_wrapper">
+					<canvas id="P2_m_plus" width="525" height="400"></canvas>
+					<canvas id="P2_m" width="525" height="400"></canvas>
+					<canvas id="P2_m_mark" width="525" height="400"></canvas>
+				</div>
 			</div>
 			<div id="P2_ref_wrapper">
-				<div id="P2_ref_1">					
+				<p id="P2_r1_title"></p>
+				<div id="P2_ref_1">								
 					<canvas id="P2_r1_plus" width="525" height="190"></canvas>
 					<canvas id="P2_r1" width="525" height="190"></canvas>
 				</div>				
-				<div id="P2_ref_2">				
+				<p id="P2_r2_title"></p>
+				<div id="P2_ref_2">						
 					<canvas id="P2_r2_plus" width="525" height="190"></canvas>
 					<canvas id="P2_r2" width="525" height="190"></canvas>
 				</div>				
-				<div id="P2_ref_3">
+				<p id="P2_r3_title"></p>
+				<div id="P2_ref_3">					
 					<canvas id="P2_r3_plus" width="525" height="190"></canvas>
 					<canvas id="P2_r3" width="525" height="190"></canvas>
 				</div>				
 			</div>
 			<div id="invisible_text">
-				<p>Filler Text for Now</p>
+				<p>Nikhil is Awesome</p>
 			</div>
-			<br><br>
+			<br><br><br>
 			<div id="P2_foot_wrapper">
 				<p>Cell ID: 
 					<input type="button" id="P2_cell_prev" value="<" onclick="P2_back_clk()"></input>
-					<input type="text" id="P2_cell_id" disabled="true" value="0"></input>/<input type="text" id="P2_cell_tot" disabled="true" value="0"></input>
-					<input type="button" id="P2_cell_next" value=">" onclick="P2_fore_clk()"></input>
-					<input type="button" id="P2_cell_save" value=" Save Cell Info " onclick="P2_save_cat()"></input>
+					<input type="text" id="P2_cell_id" disabled="true" value="1"></input>/<input type="text" id="P2_cell_tot" disabled="true" value="0"></input>
+					<input type="button" id="P2_cell_next" value=">" onclick="P2_fore_clk()"></input>					
 					<input type="button" id="P2_done" value=" DONE " onclick="send_output()"></input>
 				</p>
 				<p>Z-Index:
@@ -95,14 +111,21 @@
 				<div id="P2_cat">
 					<br>
 				</div>
-			</div>
+			</div>		
 		</div>
 		<div id="Output">
-			<p id="output_header">
-			</p>
-			<p id="output_txt">
-			</p>
 		</div>
 	</div>
 </div>
 </body>
+</html>
+
+
+
+
+
+
+
+
+
+
