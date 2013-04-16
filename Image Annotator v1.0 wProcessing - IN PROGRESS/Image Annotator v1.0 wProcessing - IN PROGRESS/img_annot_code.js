@@ -1,10 +1,16 @@
 // ========================================
-// Initialization
+// Initializing Bootstrap
 
-// jQuery for Tabs
-$(function() {
-	$("#tabs").tabs();
-});
+// Show Tabs
+$('#myTab a[href="#Overview"]').tab('show'); 
+$('#myTab a[href="#Input"]').tab('show');
+$('#myTab a[href="#Marking_Phase"]').tab('show');
+$('#myTab a[href="#Annotation_Phase"]').tab('show');
+$('#myTab a[href="#Output"]').tab('show');
+
+
+// ========================================
+// Initializing Page Functionality
 
 window.addEventListener('load',initialize,false);
 
@@ -121,6 +127,7 @@ var ref3_line,ref3_title,ref3_color;
 var categories;
 
 // Marking Phase - Phase One
+var zero_state = false; 
 js_clear_flag = false; 
 
 // Annotation Phase - Phase Two
@@ -194,28 +201,11 @@ function colorImage(img_px,red,green,blue) {
 function I_reader(e) {
 	// Disable Inputs
 	document.getElementById('I_local').disabled = true;
-	document.getElementById('I_remote').disabled = true;
-	document.getElementById('I_remote_btn').disabled = true;
 	
 	// Read Local YAML File
 	readFile(this.files[0], function(e){
 		INPUT_FILE = e.target.result;
 		parseYAML();	
-	});
-}
-
-function I_remote_handler() {
-	// Disable Inputs
-	document.getElementById('I_local').disabled = true;
-	document.getElementById('I_remote').disabled = true;
-	document.getElementById('I_remote_btn').disabled = true;
-
-	// Read Remote YAML File
-	var file = document.getElementById('I_remote').value;
-	
-	readFile(file, function(e){
-		INPUT_FILE = e.target.result;
-		parseYAML();
 	});
 }
 
@@ -295,6 +285,9 @@ function initialize_P1() {
 function P1_clearAll() {
 	// Send Clear Flag to PDE
 	js_clear_flag = true; 	
+	
+	// Update P2 Front-End
+	// document.getElementById('P2_cell_id').value = 0;
 }
 
 function P1_updateCount() {
@@ -308,8 +301,25 @@ function P1_updateCount() {
 	}
 	document.getElementById("P1_daughter").innerHTML = "Daughter Cell Count: " + count;
 	
-	// Update P2 Front-End
+	// Update P2 Front-End	
 	document.getElementById('P2_cell_tot').value = CELL_DATA.length;
+	
+	// if (document.getElementById('P2_cell_id').value == 0) {
+		// return;
+	// }
+	
+	document.getElementById('P2_cell_id').value = 1;
+	
+	// Update Main Panel
+	P2_update_main();
+	
+	// Update Annotations
+	// P2_update_cat();
+	
+	// Update Reference Panels
+	P2_update_ref1();
+	P2_update_ref2();
+	P2_update_ref3();
 }
 
 // ========================================
@@ -366,17 +376,15 @@ function P2_setup_categories() {
 
 	for (i in categories) {
 		var cat_name = i;
-		var cats = categories[cat_name];
-		
-		P2_txt.innerHTML += cat_name; 
+		var cats = categories[cat_name];		
 		
 		if (cats.length == 2) {						
 			// Checkbox Needed
-			P2_txt.innerHTML += '<input type="checkbox" id="P2_cat_box_'+i+'">';				
+			P2_txt.innerHTML += '<label class="checkbox">'+cat_name+'<input type="checkbox" id="P2_cat_box_'+i+'"></label>';				
 		}
 		else if (cats.length > 2) {
 			// Drop Down Menu Needed
-			var menu_html = '<select id="P2_cat_box_'+i+'">';
+			var menu_html = '<label>'+cat_name+'</label><select id="P2_cat_box_'+i+'">';
 			
 			for (var j = 0; j < cats.length; j++) {					
 				menu_html += '<option value='+cats[j]+'>'+cats[j]+'</option>';				
@@ -385,10 +393,12 @@ function P2_setup_categories() {
 			
 			// Add to HTML of Page
 			P2_txt.innerHTML += menu_html;			
-		}
+		}		
 		else {
+			P2_txt.innerHTML += cat_name;
+		
 			// Blank Text Box
-			P2_txt.innerHTML += '<input type="text" id="P2_cat_box_'+i+'">';
+			P2_txt.innerHTML += '<input type="text" class="input-small" id="P2_cat_box_'+i+'">';
 		}		
 		
 		P2_txt.innerHTML += '<br>';
@@ -972,8 +982,12 @@ function out_summary() {
 	var cells_annotated = 0; 
 	
 	// Set Up Category Template
+	var max_choices = 0;
+	var cat_choices = new Array();
+	var cat_choice_counter = 0; 
 	var cat_template = new Array();
 	var cat_counter = 0; 
+	var num_categories = 0;
 	for (var i in categories) {
 		var cat_name = i;
 		var cats = categories[cat_name];
@@ -985,7 +999,15 @@ function out_summary() {
 		for (j = 0; j<cats.length; j++) {
 			cat_template[cat_counter] = cats[j];
 			cat_counter++;
-		}	
+		}
+	
+		// Determine Max Number of Choices and Number of Choices per Category
+		max_choices = Math.max(max_choices,cats.length);
+		cat_choices[cat_choice_counter] = cats.length;
+		cat_choice_counter++;
+		
+		// Count Number of Categories
+		num_categories++;
 	}	
 	
 	// Set Up Annotation Conter
@@ -1026,43 +1048,63 @@ function out_summary() {
 	// Calculate Percentages
 	num_daughter = Math.floor(num_daughter*100/cells_annotated);
 	out_txt += "With Daughter Cells: " + num_daughter + "% <br>";
-	num_daughter = 100-num_daughter;
-	out_txt += "Without Daughter Cells: " + num_daughter + "% <br>";
-
-	for (var i = 0; i < cat_template.length; i++) {
-		// Get Category
-		out_txt += cat_template[i];
-		out_txt += ": ";
+	var no_daughter = 100-num_daughter;
+	out_txt += "Without Daughter Cells: " + no_daughter + "% <br>";
+	
+	var curr_cat = 0; 
+	var outer_vis_array = new Array();
+	
+	var first_array = new Array(max_choices+1);
+	first_array[0] = 'Categories';
+	for (var i = 1; i<max_choices+1; i++) {
+		first_array[i] = '';
+	}
+	outer_vis_array[0] = first_array;
+	
+	var second_array = new Array(max_choices+1);
+	second_array[0] = 'Daughter Cell';
+	second_array[1] = num_daughter + "% Present";
+	second_array[2] = no_daughter + "% Absent";
+	for (var i = 3; i<max_choices+1; i++) {
+		second_array[i] = '';
+	}
+	outer_vis_array[1] = second_array;
+	
+	var template_loc = 0;
+	for (var c in categories) {
+		var vis_array = new Array(max_choices+1);	
+		for (var i = 0; i<max_choices+1; i++) {
+			vis_array[i] = '';
+		}
+	
+		for (var i = 0; i < cat_choices[curr_cat]; i++) {
+			var temp_category = cat_template[template_loc];
+			var temp_pct = Math.floor(annot_counter[template_loc]*100/cells_annotated);
 		
-		// Actual Calculation
-		out_txt += Math.floor(annot_counter[i]*100/cells_annotated);
-		out_txt += "% <br>";
+			// Get Category
+			out_txt += temp_category;
+			out_txt += ": ";
+			
+			// Actual Calculation
+			out_txt += temp_pct;
+			out_txt += "% <br>";		
+			
+			vis_array[0] = c;
+			vis_array[i+1] = temp_pct + "% " + temp_category;
+			
+			template_loc++;
+		}			
+		
+		// Add to Visualization Tables
+		outer_vis_array[curr_cat+2] = vis_array;
+		
+		// Increment Current Category
+		curr_cat++;	
 	}
 	
-	// Send to Front-End
-	document.getElementById('output_summary').innerHTML = out_txt;	
+	// Send to Table			
+	var vis_data = google.visualization.arrayToDataTable(outer_vis_array);
+	var vis_table = new google.visualization.Table(document.getElementById('output_table'));
+	vis_table.draw(vis_data);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
