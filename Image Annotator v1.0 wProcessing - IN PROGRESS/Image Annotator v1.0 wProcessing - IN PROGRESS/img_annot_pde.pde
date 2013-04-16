@@ -34,6 +34,7 @@ boolean daughterClicked = false;
 boolean delete_daughter = false; 
 
 int cell_id_clicked;
+int cell_to_replace;
 int down_x,down_y;
 int drag_tol = 10;
 
@@ -146,6 +147,12 @@ void draw() {
 			if (!((show_mark && motherClicked)
 				&& (i == cell_id_clicked)))
 			{
+				// Don't draw cell if it's about to be replaced.
+				if (cell_to_replace == i)
+				{
+					continue;
+				}
+			
 				// Draw Line
 				line(m_x,m_y,d_x,d_y);
 				
@@ -168,6 +175,7 @@ void draw() {
 		// Draw Mother
 		if (!show_mark && motherClicked && (i == cell_id_clicked))
 		{
+			// Don't draw cell if it's about to be replaced.
 			// If the cell is about to be deleted, display it in red.
 			fill(255,0,0);
 		}	
@@ -175,12 +183,20 @@ void draw() {
 		{
 			fill(mark_red,mark_green,mark_blue);
 		}
-		ellipse(m_x,m_y,mark_d,mark_d);
+		
+		// Only draw cell if it's not about to be replaced.
+		if (cell_to_replace != i)
+		{
+			ellipse(m_x,m_y,mark_d,mark_d);
+		}
+
 	}	
 }
 
 void mousePressed() {
+
 	show_mark = true; 
+	cell_to_replace = -1;
 
 	// Check if Clicking a Mother Cell
 	motherClicked = false;
@@ -204,6 +220,7 @@ void mousePressed() {
 		double d_sq = pow(mouseX-daughter_x.get(i),2) + pow(mouseY-daughter_y.get(i),2);
 		if (sqrt(d_sq) < mark_d/2) {
 			daughterClicked = true;
+			delete_daughter = true;
 			show_mark = false;
 			cell_id_clicked = i; 
 			
@@ -234,19 +251,57 @@ void mouseDragged() {
 			linked_mode = true;
 			show_mark = true;
 		}
+		
 	}	
 	
 	// Check Tolerance on Daughter Cell
 	if (daughterClicked) {
 		double d_sq = pow(mouseX-down_x,2) + pow(mouseY-down_y,2);
 		if (sqrt(d_sq) < drag_tol) {
-			daughter_delete = true; 
+			delete_daughter = true; 
 			show_mark = false;
 		}
 		else {
-			daughter_delete = false; 
+			delete_daughter = false; 
 			show_mark = true;
 		}		
+	}
+	
+	// Figure out if the cell is about to be 
+	// placed on top of an existing cell.
+	
+	cell_to_replace = -1;
+	
+	for (int i = 0; i < mother_x.size(); i++)
+	{
+		if (i == cell_id_clicked)
+		{
+			if (motherClicked)
+			{
+				// We don't need to replace the cell if it's the one
+				// we just clicked on.
+				continue;
+			}
+		}
+		double d1_sq = pow(mouseX-mother_x.get(i),2) + pow(mouseY-mother_y.get(i),2);
+		double d2_sq = pow(mouseX-daughter_x.get(i),2) + pow(mouseY-daughter_y.get(i),2);
+		if (sqrt(d1_sq) < drag_tol)
+		{
+			cell_to_replace = i;
+			break;
+		}
+		
+		if (sqrt(d2_sq) < drag_tol)
+		{
+			// Don't replace daughter cell if it's the one that was
+			// just clicked.
+			if (daughterClicked && (i == cell_id_clicked))
+			{
+				continue;
+			}
+			cell_to_replace = i;
+			break;
+		}
 	}
 
 	// Save X and Y Coordinates
@@ -275,7 +330,8 @@ void mouseReleased() {
 	}
 
 	// If Clicked Daughter, Delete Daughter
-	if (daughterClicked && daughter_delete) {			
+	
+	if (daughterClicked && delete_daughter) {			
 		daughter_x.set(cell_id_clicked,-1);
 		daughter_y.set(cell_id_clicked,-1);
 		
@@ -288,6 +344,22 @@ void mouseReleased() {
 		send_data_to_js();
 	
 		return; 		
+	}
+	
+	// If replacing cell, remove that cell.
+	
+	if (cell_to_replace != -1)
+	{
+		mother_x.remove(cell_to_replace);
+		mother_y.remove(cell_to_replace);
+		
+		daughter_x.remove(cell_to_replace);
+		daughter_y.remove(cell_to_replace);
+		
+		cell_to_replace = -1;
+		cell_id_clicked -= 1;
+		
+		send_data_to_js();
 	}
 	
 	// Make the Mark

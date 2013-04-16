@@ -3,12 +3,9 @@
 <head>
 	<meta charset="utf-8"/>
 	<title>Image Annotator</title>
-	<!-- jQuery and Google Visualization Javascript -->
+	<!-- jQuery Javascript -->
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<script type="text/javascript">
-		google.load("jquery", "1");
-		google.load('visualization', '1', {packages:['table']});
-	</script>	
+	<script type="text/javascript">google.load("jquery", "1");</script>
 	<!-- YAML Parser Javascript -->
 	<script src="js-yaml.min.js"></script>
 	<!-- Processing.js -->
@@ -25,7 +22,7 @@
 </head>
 <body>
 <div id="wrapper">
-	<div class="navbar navbar-inverse">
+	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<a class="brand">Image Annotator</a>
 			<ul class="nav">
@@ -38,14 +35,26 @@
 		</div>
 		<div id="tab-content" class="tab-content">
 			<div id="Overview" class="tab-pane active">
+				<div class="hero-unit">
+					<h1>Image Annotator</h1>
+					<p>A simple, intuitive app for marking and annotating cell imagery.</p>
+					<p>
+						<a class="btn btn-primary btn-large btn-success" id="btn_start">
+							Begin
+						</a>
+					</p>
+				</div>
+				<h2>Overview</h2>
 				<p>This is where the overview will go.</p>
 			</div>
 			<div id="Input" class="tab-pane">
+				<h2>Input</h2>
 				<p>Enter YAML Configuration File from Local Filesystem or Remote Location:</p>	
 				<br><br>
 				<p>Local Filesystem: <input type="file" id="I_local"></p>			
 			</div>
 			<div id="Marking_Phase" class="tab-pane">
+				<h2>Step 1: Mark</h2>
 				<div id="P1_mark">
 					<!-- Invisible Canvas Elements -->
 					<canvas id="p1_c1" width="760" height="560"></canvas>				
@@ -63,6 +72,7 @@
 				<p id="P1_daughter">Daughter Cell Count: 0</p>						
 			</div>
 			<div id="Annotation_Phase" class="tab-pane">
+				<h2>Step 2: Annotate</h2>
 				<div id="P2_main">				
 					<p id="P2_m_title"></p>
 					<div id="P2_main_wrapper">
@@ -87,24 +97,24 @@
 						<canvas id="P2_r3_plus" width="525" height="190"></canvas>
 						<canvas id="P2_r3" width="525" height="190"></canvas>
 					</div>				
-				</div>	
+				</div>
+				<div id="invisible_text">
+					<p>Nikhil is Awesome</p>
+				</div>
 				<br><br><br>
 				<div id="P2_foot_wrapper">
-					<legend>Categories</legend>
-					<p>
-						<span class="label">Cell ID:</span>
-						<input class="btn" type="button" id="P2_cell_prev" value="<" onclick="P2_back_clk()"></input>
+					<p>Cell ID: 
+						<input type="button" id="P2_cell_prev" value="<" onclick="P2_back_clk()"></input>
 						<input type="text" id="P2_cell_id" disabled="true" value="1"></input>/<input type="text" id="P2_cell_tot" disabled="true" value="0"></input>
-						<input class="btn" type="button" id="P2_cell_next" value=">" onclick="P2_fore_clk()"></input>					
-						<input class="btn" type="button" id="P2_done" value=" DONE " onclick="send_output()"></input>
+						<input type="button" id="P2_cell_next" value=">" onclick="P2_fore_clk()"></input>					
+						<input type="button" id="P2_done" value=" DONE " onclick="send_output()"></input>
 					</p>
-					<p>
-						<span class="label">Z-Index:</span>
-						<span class="label">Top:</span><input type="text" id="P2_z1" disabled="true" value="0"></input>/<input type="text" id="P2_z1_max" disabled="true" value="0"></input>
-						<span class="label">Middle:</span><input type="text" id="P2_z2" disabled="true" value="0"></input>/<input type="text" id="P2_z2_max" disabled="true" value="0"></input>
-						<span class="label">Bottom:</span><input type="text" id="P2_z3" disabled="true" value="0"></input>/<input type="text" id="P2_z3_max" disabled="true" value="0"></input>
-						<input class="btn" type="button" value="<" onclick="P2_decrease_z()"></input>
-						<input class="btn" type="button" value=">" onclick="P2_increase_z()"></input>
+					<p>Z-Index:
+						Top:<input type="text" id="P2_z1" disabled="true" value="0"></input>/<input type="text" id="P2_z1_max" disabled="true" value="0"></input>
+						Middle:<input type="text" id="P2_z2" disabled="true" value="0"></input>/<input type="text" id="P2_z2_max" disabled="true" value="0"></input>
+						Bottom:<input type="text" id="P2_z3" disabled="true" value="0"></input>/<input type="text" id="P2_z3_max" disabled="true" value="0"></input>
+						<input type="button" value="<" onclick="P2_decrease_z()"></input>
+						<input type="button" value=">" onclick="P2_increase_z()"></input>
 					</p>
 					<div id="P2_cat">
 						<br>
@@ -112,9 +122,10 @@
 				</div>		
 			</div>
 			<div id="Output" class="tab-pane">
-				<p id="output_table"></p>
-				<p id="output_header"></p>				
-				<p id="output_txt"></p>				
+				<h2>Output</h2>
+				<p id="output_header"></p>
+				<p id="output_txt"></p>
+				<p id="output_summary"></p>
 			</div>
 		</div>
 	</div>
