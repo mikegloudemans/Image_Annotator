@@ -1,0 +1,29 @@
+{
+  "images": {
+    "ref1": {
+      "color": [255,0,0], 
+      "path": ["img/168_red_1.jpg","img/168_dic_1.jpg"], 
+      "title": "Red"
+    }, 
+    "ref3": {
+      "color": [0,255,0], 
+      "path": ["img/168_green_1.jpg","img/168_dic_1.jpg"], 
+      "title": "Green"
+    }, 
+    "main": {
+      "color": [], 
+      "path": ["img/168_dic_1.jpg"], 
+      "title": "Main"
+    }, 
+    "ref2": {
+      "color": [0,0,255], 
+      "path": ["img/168_blue_1.jpg"], 
+      "title": "Blue"
+    }
+  }, 
+  "categories": {
+    "SPB": ["Unduplicated","Duplicated-Short","Duplicated-Long"], 
+    "Bud": ["Budded","Unbudded"], 
+    "Myosin Ring": ["Present","Absent"]
+  }
+}

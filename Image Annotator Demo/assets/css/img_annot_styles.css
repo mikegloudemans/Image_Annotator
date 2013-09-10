@@ -1,0 +1,276 @@
+/* ---------------------------- */
+/* Overall */
+
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+.hide{
+	display: none;
+}
+
+#tab-content
+{
+	width: 1400px;
+	margin: 15px auto;
+	padding-top: 40px;
+	text-align: left;
+}
+
+#navbar_contents
+{
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+/* ---------------------------- */
+/* Marking Phase - Phase One    */
+
+#loading_failure, #loading_success
+{
+	width: 500px;
+}
+
+#legend_start
+{
+	width: 500px;
+}
+
+#P1_mark {	
+	margin-bottom: 15px;
+	position: relative;
+	height: 560px;
+	width: 760px;	
+	float: left;
+}
+
+#P1_canv_img {
+	position: absolute;
+	z-index: 4;
+	border-style: solid; 
+}
+
+#img_pde {
+	position: absolute;
+	z-index: 5;
+}
+
+#p1_c1 {
+	position: absolute;
+	z-index: 1;
+	visibility: hidden;
+}
+
+#p1_c2 {
+	position: absolute;
+	z-index: 2;
+	visibility: hidden;
+}
+
+#p1_c3 {
+	position: absolute;
+	z-index: 3;
+	visibility: hidden;
+} 
+ 
+#P1_controls {
+	float:left;
+	margin-left: 35px;
+	border-style: solid;
+	padding: 20px;
+}
+
+#P1_form {
+	margin-bottom:0px;
+}
+
+#P1_mother_label, #P1_mother, #P1_daughter_label, #P1_daughter{
+	float:left;
+}
+
+#P1_mother,#P1_daughter{
+	margin-right:5px;
+}
+
+#P1_cell_stats_header{
+	margin-top:0px;
+}
+
+#P1_cell_stats{
+	margin-bottom: 10px;
+}
+ 
+/* ---------------------------- */
+/* Annotation Phase - Phase Two */
+
+#P2_img_col1{
+	float: left;
+}
+
+#P2_img_col2{
+	float: left;
+	margin-left: 15px;
+}
+
+#P2_cell_id_label{
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+#P2_cell_status
+{
+	margin-left: 61px;
+	margin-top: 5px;
+	margin-right: 20px;
+}
+
+#P2_zindex_label, #P2_zoom_label{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+#P2_cell_prev, #P2_cell_next {
+	margin: 0px;
+}
+
+#P2_images {
+	padding-bottom:20px;
+}
+
+#P2_annotation_form
+{
+	margin-bottom:0px;
+}
+
+#z_status_container
+{
+	float:left;
+}
+
+#z_control_container
+{
+	margin-left: 20px;
+	padding-top: 24px;
+	float:left;
+}
+
+#P2_z1_label, #P2_z2_label, #P2_z3_label
+{
+	float: left;
+	width: 50px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+#P2_z1, #P2_z2, #P2_z3
+{
+	margin-bottom: 10px;
+	margin-right: 5px;
+	float: left;
+}
+
+#P2_z1_max, #P2_z2_max, #P2_z3_max
+{
+	margin-left: 5px;
+}
+
+#P2_m_mark {
+	position: absolute;
+	left: 0px;
+	top: 0;
+	z-index: 2;		
+}
+
+#P2_m_plus {
+	position: absolute;
+	left: 0px;
+	top: 0;
+	z-index: 3;	
+}
+
+#P2_main_wrapper, #P2_ref_2 {		
+	margin-bottom: 15px;
+	position: relative;
+	height: 296px;
+	width: 400px;
+}
+
+#P2_ref_1, #P2_ref_3 {
+	position: relative;
+	height: 296px;
+	width: 400px;
+}
+
+#P2_m, #P2_r1, #P2_r2, #P2_r3 {
+	border-style:solid;
+	position: absolute;
+	left: 0px;
+	top: 0;
+	z-index: 1; 
+}
+
+#P2_r1_plus, #P2_r2_plus, #P2_r3_plus {
+	position: absolute;
+	left: 0px;
+	top: 0;
+	z-index: 2;
+}
+
+#P2_foot_wrapper {
+	padding: 15px;
+	padding-top: 5px;
+	position: relative;
+	border-style: solid; 
+	margin-bottom: 50px;
+}
+
+#P2_cat {	
+	margin-left: 0px;
+}
+
+.P2_cat {
+	position: static;	
+	left: 300px;
+}
+
+#P2_main_label, #P2_ref1_label, #P2_ref2_label, #P2_ref3_label{
+	position: absolute;
+	left: 7px;
+	top: 7px;
+	z-index: 4;
+}
+
+.cat_div
+{
+	display:block;
+	height: 40px;
+	margin-bottom: 5px;
+	margin-top: 5px;
+}
+/* Old positioning: */
+
+/* #P2_ref1_slider, #P2_ref2_slider, #P2_ref3_slider {
+	position: absolute;
+	top: 16px;
+	left: 383px;
+	height: 271px;
+	z-index:5;
+} */
+
+#P2_ref1_slider, #P2_ref2_slider, #P2_ref3_slider {
+	position: absolute;
+	top: 3px;
+	left: 389px;
+	height: 294px;
+	z-index:5;
+}
+
+#P2_btn_done
+{
+	margin-top:20px;
+}
+
+.tab_wrapper {
+	margin-left: 30px;
+}

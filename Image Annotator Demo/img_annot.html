@@ -1,0 +1,282 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<title>Image Annotator</title>
+	<!-- jQuery -->
+	<script type="text/javascript" src="assets/js/jquery-1.9.1.min.js"></script>
+	<!-- jQuery UI -->
+	<script type="text/javascript" src="assets/js/jquery-ui-1.10.2.custom.min.js"></script>
+	<link rel="stylesheet" href="assets/css/jquery-ui-1.10.2.custom.min.css">
+	<!-- jqPlot -->	
+	<script type="text/javascript" src="assets/js/jquery.jqplot.min.js"></script>
+	<link rel="stylesheet" href="assets/css/jquery.jqplot.min.css"></script>
+	<script type="text/javascript" src="assets/js/jqplot.pieRenderer.min.js"></script>
+	<!-- YAML Parser Javascript -->
+	<script src="assets/js/js-yaml.min.js"></script>
+	<!-- Processing.js -->
+	<script src="assets/js/processing.min.js"></script>
+	<!-- Bootstrap -->
+	<script src="assets/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<!-- Bootbox -->
+	<script src="assets/js/bootbox.min.js"></script>
+	<!-- Local Javascript -->
+	<script src="assets/js/img_annot_code.js"></script>
+	<!-- Local CSS -->
+	<link rel="stylesheet" href="assets/css/img_annot_styles.css">
+</head>
+<body>
+<div id="wrapper">
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div id="navbar_contents" class="navbar-inner">
+			<a class="brand">Image Annotator</a>
+			<ul class="nav" id="myLeftTabs">
+				<li id="start_tab" class="active left-tab"><a href="#Load_Files" data-toggle="tab">Load Files</a></li>
+				<li id="mark_tab" class="left-tab"><a href="#Marking_Phase" data-toggle="tab">Mark</a></li>
+				<li id="annotate_tab" class="left-tab"><a href="#Annotation_Phase" data-toggle="tab">Annotate</a></li>
+				<li id="output_tab" class="left-tab"><a href="#Output" data-toggle="tab">Output</a></li>
+			</ul>
+			<ul class="nav pull-right" id="myRightTabs">
+				<li id="help_tab" class="right-tab"><a href="#Help" data-toggle="tab">Help</a></li>
+				<li id="about_tab" class="right-tab"><a href="#About" data-toggle="tab">About</a></li>
+			</ul>
+		</div>
+	</div>
+	<div id="tab-content" class="tab-content">
+		<div id="Load_Files" class="tab-pane fade in active">
+			<div class="tab_wrapper">
+				<h3>Image Annotator</h3>
+				<h4>A simple and intuitive app for marking and annotating cell imagery.</h4>
+				<br>				
+				<div class="input">					
+					<form>
+						<legend id="legend_start">Get Started:</legend>
+						<label>Select your YAML configuration file.</label>	
+						<input type="file" id="I_local">
+						<br><br>
+						<div id="alerts"></div>
+						<div class="alert alert-success hide" id="loading_success">
+							<button type="button" class="close">&times;</button>
+							File loaded successfully.
+						</div>
+						<div class="alert hide" id="loading_failure">
+							<button type="button" class="close">&times;</button>
+							<strong>Whoops!</strong> There was an error in loading your files. Make sure you've formatted your YAML file correctly, and then try again.
+						</div>
+						<br>
+						<a class="btn btn-success" id="btn_start" href="#">
+							Continue
+						</a>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div id="Marking_Phase" class="tab-pane fade">
+			<div class="tab_wrapper">
+				<h3>Step 1: Mark</h3>
+				<div id="P1_mark">
+					<!-- Invisible Canvas Elements -->
+					<canvas id="p1_c1" width="760" height="560"></canvas>				
+					<canvas id="p1_c2" width="760" height="560"></canvas>				
+					<canvas id="p1_c3" width="760" height="560"></canvas>	
+					<!--  -->
+					<canvas id="img_pde" data-processing-sources="assets/pde/img_annot_pde.pde"></canvas>
+					<canvas id="P1_canv_img" width="760" height="560"></canvas>
+				</div>
+				<div id="P1_controls">
+					<form id="P1_form">
+						<div id="P1_cell_stats">
+							<h5 id = "P1_cell_stats_header">Cell counts:</h5>
+							<span id="P1_mother" class="badge badge-info">0</span>
+							<label id="P1_mother_label">Mother cells</label>
+							<div style="clear:both;"></div>
+							<span id="P1_daughter" class="badge badge-success">0</span>
+							<label id="P1_daughter_label">Daughter cells</label>
+							<div style="clear:both;"></div>
+						</div>
+						<div id="P1_buttons">
+							<a class="btn btn-success" id="P1_btn_continue" href="#" data-toggle="tooltip" data-placement="bottom" title data-original-title = "Proceed to the annotation phase.">
+								Continue
+							</a>
+							<button type="button" class="btn btn-danger" id="P1_btn_clear" onclick="P1_clearAll()" data-toggle="tooltip" data-placement="bottom" title data-original-title = "Remove all markings and start over.">Reset</button>
+						</div>
+						<br>
+						<a href="#" id="P1_help" data-toggle="tooltip" data-placement="bottom" title data-original-title = "Click anywhere to mark mother cells, or click on a mother and drag the cursor to mark its daughter. Click on an existing mark to delete it.">Help</a>
+					</form>
+				</div>
+			</div>		
+		</div>
+		<div id="Annotation_Phase" class="tab-pane fade">
+			<div class="tab_wrapper">
+				<h3>Step 2: Annotate</h3>
+				<div class="row">
+					<div class="span9" id="P2_images">
+						<div id="P2_img_col1">
+							<div id="P2_main_wrapper">
+								<span id="P2_main_label" class="label label-info"></span>
+								<canvas id="P2_m_plus" width="400" height="296"></canvas>
+								<canvas id="P2_m" width="400" height="296"></canvas>									
+							</div>
+							<div id="P2_ref_1">
+								<span id="P2_ref1_label" class="label label-info"></span>
+								<canvas id="P2_r1_plus" width="400" height="296"></canvas>
+								<canvas id="P2_r1" width="400" height="296"></canvas>
+								<div id="P2_ref1_slider"></div>	
+							</div>
+						</div>
+						<div id = "P2_img_col2">
+							<div id="P2_ref_2">
+								<span id="P2_ref2_label" class="label label-info"></span>
+								<canvas id="P2_r2_plus" width="400" height="296"></canvas>
+								<canvas id="P2_r2" width="400" height="296"></canvas>
+								<div id="P2_ref2_slider"></div>	
+							</div>				
+							<div id="P2_ref_3">
+								<span id="P2_ref3_label" class="label label-info"></span>
+								<canvas id="P2_r3_plus" width="400" height="296"></canvas>
+								<canvas id="P2_r3" width="400" height="296"></canvas>
+								<div id="P2_ref3_slider"></div>	
+							</div>				
+						</div>	
+					</div>
+					<div class="span3" id="P2_foot_wrapper">
+						<form id="P2_annotation_form">
+							<legend>Controls</legend>
+							<p>
+								<h5 id="P2_cell_id_label">Cell ID:</h5>
+								<span class="badge badge-inverse" id="P2_cell_status">0 / 0</span>
+								<div class="btn-group">
+									<button class="btn" type="button" id="P2_cell_prev" onclick="P2_back_clk()" disabled = "true"><i class="icon-arrow-left"></i></button>
+									<button class="btn" type="button" id="P2_cell_next" onclick="P2_fore_clk()" disabled = "true"><i class="icon-arrow-right"></i></button>					
+								</div>
+							</p>
+							<p>
+								<h5 id="P2_zindex_label">Z-Index:</h5>
+								<div id = "z_status_container">
+									<label id="P2_z1_label"></label>
+									<span class="badge badge-inverse" id="P2_z1">0 / 0</span>
+									<div style="clear:both;"></div>
+									
+									<label id="P2_z2_label"></label>
+									<span class="badge badge-inverse" id="P2_z2">0 / 0</span>
+									<div style="clear:both;"></div>
+
+									<label id="P2_z3_label"></label>
+									<span class="badge badge-inverse" id="P2_z3">0 / 0</span>
+									<div style="clear:both;"></div>
+								</div>
+								<div id="z_control_container">
+									<div class="btn-group">
+										<button id="P2_btn_decrease_z" class="btn" type="button" onclick="P2_decrease_z()" disabled = "true"><i class="icon-minus"></i></button>
+										<button id="P2_btn_increase_z" class="btn" type="button" onclick="P2_increase_z()" disabled = "true"><i class="icon-plus"></i></button>
+									</div>
+								</div>
+								<div style="clear:both;"></div>
+							</p>
+							<p>
+								<h5 id="P2_zoom_label">Percent Zoom:</h5>									
+								<div class="input-prepend input-append">
+									<span id="P2_zoom_out" class="add-on btn" onclick="P2_less_zoom()"><i class="icon-zoom-out"></i></span>
+									<input class="span1 text-center" id="P2_zoom" onchange="P2_zoom_changed()" onkeypress="return noEnterZoom(event)" type="text" value="100">
+									<span id="P2_zoom_in" class="add-on btn" onclick="P2_more_zoom()"><i class="icon-zoom-in"></i></span>
+								</div>									
+							</p>
+							<legend>Feature List</legend>
+							<div id="P2_cat">
+							</div>
+							<a href="#" class="btn btn-success" id="P2_btn_done" onclick="send_output()" data-toggle="tooltip" data-placement="bottom" title data-original-title ="Proceed to the final summary of your annotation.">Finish</a>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="Output" class="tab-pane fade">
+			<div class="tab_wrapper">
+				<h3>Annotation Summary</h3>
+				<div id="output_charts"></div>
+				<div id="summary_alerts"></div>
+				<p id="output_header"></p>							
+				<p id="output_txt"></p>					
+			</div>			
+		</div>
+		<div id="Help" class="tab-pane fade">
+			<div class="tab_wrapper">
+				<h3>Help</h3>
+				<div class="accordion" id="accordion2">
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+								<strong>Load Files</strong>
+							</a>
+						</div>
+						<div id="collapseOne" class="accordion-body collapse">
+							<div class="accordion-inner">
+								Select the YAML file you would like to use, and its contents must be in well-formatted JSON, a subset of YAML. For help with this, you can use an online YAML converter and validator such as <a href="http://yaml-online-parser.appspot.com/">this.</a> All images in the YAML file must be JPEG images, and the annotation categories are specified in the YAML file itself, along with any image recoloring and image z-stacking desired.
+							</div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+								<strong>Mark</strong>
+							</a>
+						</div>
+						<div id="collapseTwo" class="accordion-body collapse">
+							<div class="accordion-inner">
+								Click anywhere to mark mother cells, or click on a mother and drag the cursor to mark its daughter. Click on an existing mark to delete it.
+							</div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+								<strong>Annotate</strong>
+							</a>
+						</div>
+						<div id="collapseThree" class="accordion-body collapse">
+							<div class="accordion-inner">
+								You can cycle through each of the cells marked in the Marking Phase, slide up and down through the z-indices of z-stacked images, and zoom from 10% to 1000% of the image. These allow you to have a plethora of information from which to accurately and efficiently annotate each cell. 
+							</div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+								<strong>Output</strong>
+							</a>
+						</div>
+						<div id="collapseFour" class="accordion-body collapse">
+							<div class="accordion-inner">
+								Output statistics are shown here in both a visual format (charts) and text format(comma-separated strings). If not all marked cells were annotated, Image Annotator will inform you of this. 
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="About" class="tab-pane fade">
+			<div class="tab_wrapper">
+				<h3>About Image Annotator</h3>				
+				<h4>
+					A simple and intuitive app for marking and annotating cell imagery, developed by the Hartemink Computational Biology Lab at Duke University.
+				</h4>
+				<br>
+				<p>
+					<strong>Lead Software Developer: </strong>Nikhil Saxena (Duke ECE/BME '13)<br>
+					<strong>Website: </strong><a href="http://www.linkedin.com/pub/nikhil-saxena/40/784/22a">http://www.linkedin.com/pub/nikhil-saxena/40/784/22a</a>
+				</p>
+				<p>
+					<strong>Software Developer: </strong>Mike Gloudemans (Duke CS '15)<br>
+					<strong>Website: </strong><a href="http://www.linkedin.com/pub/mike-gloudemans/51/208/304">http://www.linkedin.com/pub/mike-gloudemans/51/208/304</a>
+				</p>								
+				<p>
+					<strong>Principal Investigator: </strong>Dr. Alexander Hartemink<br>
+					<strong>Website: </strong><a href="http://www.cs.duke.edu/~amink/">http://www.cs.duke.edu/~amink/</a>
+				</p>				
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
